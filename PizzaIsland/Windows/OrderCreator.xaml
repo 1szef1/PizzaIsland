@@ -1,0 +1,254 @@
+﻿<Window
+  x:Class="PizzaIsland.Windows.OrderCreator"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:PizzaIsland"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+  xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+  Title="Formularz zamówienia"
+  Width="800"
+  Height="500"
+  Icon="/PizzaIsland;component/Images/program_icon.png"
+  SizeToContent="Height"
+  WindowStartupLocation="CenterScreen"
+  mc:Ignorable="d">
+
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/PizzaIsland;component/Styles/DataGrid.Styles.xaml" />
+        <ResourceDictionary Source="/PizzaIsland;component/Styles/Button.Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+
+  <Grid Margin="10">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="400" />
+      <ColumnDefinition Width="50" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="220" />
+      <RowDefinition Height="50" />
+    </Grid.RowDefinitions>
+
+    <ScrollViewer
+      Grid.Row="0"
+      Grid.RowSpan="2"
+      Grid.Column="0"
+      HorizontalScrollBarVisibility="Auto">
+      <StackPanel>
+        <Expander
+          x:Name="expPizzy"
+          Header="Pizzy"
+          IsExpanded="True">
+          <ListBox
+            x:Name="lbPizzy"
+            DisplayMemberPath="DisplayName"
+            SelectionChanged="listBox_SelectionChanged" />
+        </Expander>
+
+        <Expander
+          x:Name="expPizzaAddOns"
+          Header="Dodatki do pizzy"
+          IsExpanded="True">
+          <ListBox
+            x:Name="lbPizzaAddOns"
+            DisplayMemberPath="DisplayName"
+            IsEnabled="False"
+            ItemsSource="{Binding}"
+            SelectionChanged="listBox_SelectionChanged" />
+        </Expander>
+
+        <Expander
+          x:Name="expMainDishes"
+          Header="Dania główne"
+          IsExpanded="True">
+          <ListBox
+            x:Name="lbMainDishes"
+            DisplayMemberPath="DisplayName"
+            ItemsSource="{Binding}"
+            SelectionChanged="listBox_SelectionChanged" />
+        </Expander>
+
+        <Expander
+          x:Name="expMainDishAddOns"
+          Header="Dodatki do dań głównych"
+          IsExpanded="True">
+          <ListBox
+            x:Name="lbMainDishAddOns"
+            DisplayMemberPath="DisplayName"
+            IsEnabled="False"
+            ItemsSource="{Binding}"
+            SelectionChanged="listBox_SelectionChanged" />
+        </Expander>
+
+        <Expander
+          x:Name="expSoups"
+          Header="Zupy"
+          IsExpanded="True">
+          <ListBox
+            x:Name="lbSoups"
+            DisplayMemberPath="DisplayName"
+            ItemsSource="{Binding}"
+            SelectionChanged="listBox_SelectionChanged" />
+        </Expander>
+
+        <Expander
+          x:Name="expDrinks"
+          Header="Napoje"
+          IsExpanded="True">
+          <ListBox
+            x:Name="lbDrinks"
+            DisplayMemberPath="DisplayName"
+            ItemsSource="{Binding}"
+            SelectionChanged="listBox_SelectionChanged" />
+        </Expander>
+      </StackPanel>
+    </ScrollViewer>
+
+    <StackPanel
+      Grid.Row="0"
+      Grid.RowSpan="2"
+      Grid.Column="1">
+
+      <Button
+        x:Name="btnAdd"
+        Margin="10,50,10,50"
+        Click="btnAdd_Click"
+        Content="&gt;"
+        Style="{StaticResource ButtonStyle}" />
+
+      <Button
+        x:Name="btnDel"
+        Margin="10,50,10,50"
+        Click="btnDel_Click"
+        Content="&lt;"
+        Style="{StaticResource ButtonStyle}" />
+    </StackPanel>
+
+    <Grid
+      Grid.Row="0"
+      Grid.Column="2">
+      <xcdg:DataGridControl
+        x:Name="dataGrid"
+        AutoCreateColumns="False"
+        ItemsSource="{Binding}">
+
+        <xcdg:DataGridControl.Resources>
+          <Style TargetType="xcdg:TableViewScrollViewer">
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+          </Style>
+        </xcdg:DataGridControl.Resources>
+        
+        <xcdg:DataGridControl.View>
+          <xcdg:TableView
+            ColumnStretchMode="First"
+            HorizontalGridLineThickness="0"
+            ShowRowSelectorPane="False"
+            UseDefaultHeadersFooters="False"
+            VerticalGridLineThickness="0">
+            <xcdg:TableView.FixedHeaders>
+              <DataTemplate>
+                <xcdg:ColumnManagerRow />
+              </DataTemplate>
+            </xcdg:TableView.FixedHeaders>
+          </xcdg:TableView>
+        </xcdg:DataGridControl.View>
+
+        <xcdg:DataGridControl.Columns>
+          <xcdg:Column
+            Title="Produkt"
+            FieldName="Product.Name"
+            IsMainColumn="True"
+            ReadOnly="True" />
+
+          <xcdg:Column
+            Title="Ilość"
+            Width="80"
+            CellContentStringFormat="{}{0:N0}"
+            CellHorizontalContentAlignment="Right"
+            FieldName="Count">
+            <xcdg:Column.CellEditor>
+              <xcdg:CellEditor>
+                <xcdg:CellEditor.EditTemplate>
+                  <DataTemplate>
+                    <xctk:IntegerUpDown
+                      ValueChanged="CountUpDown_ValueChanged"
+                      Value="{xcdg:CellEditorBinding NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                  </DataTemplate>
+                </xcdg:CellEditor.EditTemplate>
+              </xcdg:CellEditor>
+            </xcdg:Column.CellEditor>
+          </xcdg:Column>
+
+          <xcdg:Column
+            Title="Cena"
+            Width="80"
+            CellContentStringFormat="{}{0:C2}"
+            CellHorizontalContentAlignment="Right"
+            FieldName="Price"
+            ReadOnly="True" />
+        </xcdg:DataGridControl.Columns>
+      </xcdg:DataGridControl>
+    </Grid>
+
+    <DockPanel
+      Grid.Row="1"
+      Grid.Column="2"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch">
+      <GroupBox
+        DockPanel.Dock="Top"
+        Header="Wartość zamówienia">
+        <TextBlock
+          x:Name="tbOrderValue"
+          Text="{Binding Path=OrderValue, StringFormat={}{0:C2}}"
+          TextAlignment="Left" />
+      </GroupBox>
+
+      <GroupBox
+        DockPanel.Dock="Top"
+        Header="Email">
+        <TextBox x:Name="tbEmail" />
+      </GroupBox>
+
+      <GroupBox Header="Komentarz / adres dostawy">
+        <TextBox
+          x:Name="tbComments"
+          AcceptsReturn="True"
+          TextWrapping="Wrap" />
+      </GroupBox>
+    </DockPanel>
+
+    <StackPanel
+      Grid.Row="2"
+      Grid.ColumnSpan="3"
+      HorizontalAlignment="Center"
+      Orientation="Horizontal">
+      
+      <Button
+        x:Name="btnSave"
+        Width="200"
+        Height="30"
+        Click="btnSave_Click"
+        Content="Złóż zamówienie"
+        Style="{StaticResource ButtonStyle}" />
+      <Button
+        x:Name="btnHistory"
+        Width="200"
+        Height="30"
+        Margin="50,0,0,0"
+        Click="btnHistory_Click"
+        Content="Historia zamówień"
+        Style="{StaticResource ButtonStyle}" />
+    </StackPanel>
+
+  </Grid>
+</Window>
